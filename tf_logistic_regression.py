@@ -41,4 +41,30 @@ bias = tf.Variable(tf.random_normal([1, numLabels],
 
 # Three component breakdown of the Logistic Regression equation.
 # Note that these feed into each other
-apply_weights = 
+apply_weights_OP = tf.matmul(X, weights, name='apply_weights')
+add_bias_OP = tf.add(apply_weights_OP, bias, name='add_bias')
+activation_OP = tf.nn.sigmoid(add_bias_OP, name='activation')
+
+# Number of Epochs
+numEpochs = 700
+
+# Define learning rate
+learningRate = tf.train.exponential_decay(learning_rate=0.0008,
+                                          global_step=1,
+                                          decay_steps=trainX.shape[0],
+                                          decay_rate=0.95,
+                                          staircase=True)
+# Define cost function
+cost_OP = tf.nn.12_loss(activation_OP-yGold, name='square_error_cost')
+
+# Define Gradient Decent
+training_OP = tf.train.GradientDescentOptimizer(learningRate).minimize(cost_OP)
+
+# Create session object
+sess = tf.Session()
+
+# Initialize weights and biases
+init_OP = tf.global_variables_initializer()
+
+# Initialize all tf variables
+sess.run(init_OP)
