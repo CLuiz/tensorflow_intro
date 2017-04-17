@@ -68,3 +68,29 @@ init_OP = tf.global_variables_initializer()
 
 # Initialize all tf variables
 sess.run(init_OP)
+
+# argmax(activation_OP, 1) returns the label with the most probability
+# argmax(yGold, 1) is the correct label
+correct_predictions_OP = tf.equal(tf.argmax(activation_OP, 1), tf.argmax(yGold,1))
+
+# If every false prediction is 0 and every true prediction is 1, the average returns the accuracy
+accuracy_OP = tf.reduce_mean(tf.cast(correct_predictions_OP, 'float'))
+
+# Summary op for regression output
+activation_summary_OP = tf.summary.histogram('output', activation_OP)
+
+# Summary op for accuray
+accuracy_summary_OP = tf.summary.scalar('accuracy', accuracy_OP)
+
+# Summary op for cost
+cost_summary_OP = tf.summary.scalar('cost', cost_OP)
+
+# Summary ops to check how variables (W,b) are updating after each iteration
+weightSummary = tf.summary.histogram('weights', weights.eval(session=sess))
+biasSummary = tf.summary.histogram('biases', bias.eval(session=sess))
+
+# Merge all summaries
+merged = tf.summary.merge([activation_summary_OP, accuracy_summary_OP, cost_summary_OP, weightSummary, biasSummary])
+
+# Summary writer
+writer = tf.summary.FileWriter('summary_logs', sess.graph)
