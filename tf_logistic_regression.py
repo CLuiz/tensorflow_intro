@@ -11,7 +11,7 @@ iris_X, iris_y = iris.data[:-1,:], iris.target[:-1]
 iris_y = pd.get_dummies(iris_y).values
 trainX, testX, trainY, testY = train_test_split(iris_X, iris_y,
                                                 test_size=.33,
-                                                random state=42)
+                                                random_state=42)
 
 # numFeatures is the number of features in our input dataset
 # In the Iris Dataset, there are 4
@@ -36,7 +36,7 @@ weights = tf.Variable(tf.random_normal([numFeatures, numLabels],
                                         name='weights'))
 bias = tf.Variable(tf.random_normal([1, numLabels],
                                      mean=0,
-                                     stddev=0.01
+                                     stddev=0.01,
                                      name='bias'))
 
 # Three component breakdown of the Logistic Regression equation.
@@ -55,7 +55,7 @@ learningRate = tf.train.exponential_decay(learning_rate=0.0008,
                                           decay_rate=0.95,
                                           staircase=True)
 # Define cost function
-cost_OP = tf.nn.12_loss(activation_OP-yGold, name='square_error_cost')
+cost_OP = tf.nn.l2_loss(activation_OP-yGold, name='squared_error_cost')
 
 # Define Gradient Decent
 training_OP = tf.train.GradientDescentOptimizer(learningRate).minimize(cost_OP)
@@ -116,7 +116,7 @@ for i in range(numEpochs):
             epoch_values.append(i)
             # Generate accuracy stats on test data
             train_accuracy, newCost = sess.run(
-                                               [accuracy_OP, cost_OP], feed_dict={X: trainX,      yGold,trainY})
+                                               [accuracy_OP, cost_OP], feed_dict={X: trainX,      yGold: trainY})
             # Add accuracy to live graphing variable
             accuracy_values.append(train_accuracy)
             # Add cost to live graphing variable
@@ -126,10 +126,10 @@ for i in range(numEpochs):
             cost = newCost
 
             # Generate print statements
-             print('step %d, training accuracy %g, cost %g, change in cost %g' % (i, train_accuracy, newCost, diff))
+            print('step %d, training accuracy %g, cost %g, change in cost %g' %(i, train_accuracy, newCost, diff))
 
 # How well do we perform on the hold-out test data
-print('final accuracy on test set: %s' %str(sess,run(accuracy_OP,
+print('final accuracy on test set: %s' %str(sess.run(accuracy_OP,
                                                      feed_dict={X: testX,
                                                                 yGold: testY})))
 # Plot it
