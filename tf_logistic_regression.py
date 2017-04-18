@@ -94,3 +94,43 @@ merged = tf.summary.merge([activation_summary_OP, accuracy_summary_OP, cost_summ
 
 # Summary writer
 writer = tf.summary.FileWriter('summary_logs', sess.graph)
+
+# Initialize reporting variables
+cost = 0
+diff = 0
+epoch_values = []
+accuracy_values = []
+cost_values = []
+
+# Training epochs
+for i in range(numEpochs):
+    if i > 1 and diff < .0001:
+        print('change in cost %g; convergence' %diff)
+        break
+    else:
+        # Run training step
+        step = sess.run(training_OP, feed_dict={X: trainX, yGold: trainY})
+        # Report occasional stats
+        if i % 10 == 0:
+            # Add epoch to epoch values
+            epoch_values.append(i)
+            # Generate accuracy stats on test data
+            train_accuracy, newCost = sess.run(
+                                               [accuracy_OP, cost_OP], feed_dict={X: trainX,      yGold,trainY})
+            # Add accuracy to live graphing variable
+            accuracy_values.append(train_accuracy)
+            # Add cost to live graphing variable
+            cost_values.append(newCost)
+            # Re-assign values for variables
+            diff = abs(newCost - cost)
+            cost = newCost
+
+            # Generate print statements
+             print('step %d, training accuracy %g, cost %g, change in cost %g' % (i, train_accuracy, newCost, diff))
+
+# How well do we perform on the hold-out test data
+print('final accuracy on test set: %s' %str(sess,run(accuracy_OP,
+                                                     feed_dict={X: testX,
+                                                                yGold: testY})))
+# Plot it
+plt.plot([np.mean(cost_values[i-50:i]) for i in range(len(cost_values))])
