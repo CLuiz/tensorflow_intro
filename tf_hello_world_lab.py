@@ -31,4 +31,12 @@ with tf.Session() as sess:
     result2 = tf.matmul(matrixA, matrixB)
     print(f'The result of multiplying these two matrices is: {result2}')
 
-'Im not done!'
+a = tf.constant(1000)
+b = tf.Variable(0)
+init_opt = tf.global_variables_initializer()
+update = tf.assign(b,a)
+
+with tf.Session() as sess:
+    sess.run(init_opt)
+    sess.run(update)
+    print(f'The new value of b is: {sess.run(b)}')
