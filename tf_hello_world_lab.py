@@ -27,6 +27,8 @@ matrix_mult_result = tf.matmul(matrixA, matrixB)
 with tf.Session() as sess:
     result1 = tf.multiply(matrixA, matrixB)
     print(f'The result of elementwise multiplication of these two matrices is: {result1}')
-    
+
     result2 = tf.matmul(matrixA, matrixB)
     print(f'The result of multiplying these two matrices is: {result2}')
+
+'Im not done!'
