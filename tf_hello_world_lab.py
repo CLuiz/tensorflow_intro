@@ -1,4 +1,7 @@
+import os
 import tensorflow as tf
+
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
 a = tf.constant([5])
 b = tf.constant([2])
@@ -31,6 +34,7 @@ with tf.Session() as sess:
     result2 = tf.matmul(matrixA, matrixB)
     print(f'The result of multiplying these two matrices is: {result2}')
 
+# updating variables
 a = tf.constant(1000)
 b = tf.Variable(0)
 init_opt = tf.global_variables_initializer()
@@ -40,3 +44,28 @@ with tf.Session() as sess:
     sess.run(init_opt)
     sess.run(update)
     print(f'The new value of b is: {sess.run(b)}')
+
+# Fibonnacci sequence
+f = [tf.constant(1), tf.constant(1)]
+
+for i in range(2,10):
+    temp = f[i-1] + f[i-2]
+    f.append(temp)
+
+with tf.Session() as sess:
+    result = sess.run(f)
+    print(f'The result is: {result}')
+
+# placeholders
+a = tf.placeholder(tf.float32)
+b = tf.placeholder(tf.float32)
+
+c = 2 * a - b
+
+dictionary = {a:[2,2], b:[3,4]}
+with tf.Session() as sess:
+    print(f'The result is: {sess.run(c, feed_dict=dictionary)}')
+
+# aasdsd
+a = tf.cosntant(5.)
+b = tf.constant(2.)
