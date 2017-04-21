@@ -67,5 +67,9 @@ with tf.Session() as sess:
     print(f'The result is: {sess.run(c, feed_dict=dictionary)}')
 
 # aasdsd
-a = tf.cosntant(5.)
+a = tf.constant(5.)
 b = tf.constant(2.)
+c = tf.multiply(a, b)
+
+with tf.Session() as sess:
+    print(f'The result is: {sess.run(c)}')
