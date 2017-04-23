@@ -49,7 +49,7 @@ act.eval(session=sess)
 plot_act(1, tf.tanh)
 
 # Use tanh in a neural net layer
-act = tf.tanh(tf.amtmul(i, w) + b)
+act = tf.tanh(tf.matmul(i, w) + b)
 act.eval(session=sess)
 
 # Parametric rectified linear units (ReLU)
