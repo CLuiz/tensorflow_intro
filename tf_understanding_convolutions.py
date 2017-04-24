@@ -1,5 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
+# from PIL import Image look for alternative python3 compatible
 from scipy import signal as sg
+from scipy import misc
 import tensorflow as tf
 
 h = [2,1,0]
@@ -96,3 +99,43 @@ with tf.Session() as sess:
     print(f'{sess.run(op)}')
     print('\n')
     print(f'{sess.run(op2)}')
+
+# Convolution applied on images
+
+# obtain image and save to local directory
+# wget --quiet https://ibm.box.com/shared/static/cn7yt7z10j8rx6um1v9seagpgmzzxnlz.jpg --output-document bird.jpg
+"""Need to replace this code with python3.6 compatible code"""
+# im = Image.open('bird.jpg')
+#
+# # Use the ITU-R 601-2 Luma transform to convert image to grey scale
+#
+# image_gr = im.comvert('L')
+# print('\n Original type: %r \n\n' % image_gr)
+#
+# # Convert image to a matrix with values from 0 to 255 (uint8)
+# arr = np.asarray(image_gr)
+# print('After conversion to numerical representation: \n\n %r' % arr)
+#
+# # Plot image
+# imgplot = plt.imshow(arr)
+# imgplot.set_cmap('gray')
+# print('\n Input image converted to gray scale: \n')
+# plt.show(imgplot)
+
+
+# Create edge detector kernel
+
+kernel = np.array([
+                    [0, 1, 0],
+                    [1,-4, 1],
+                    [0, 1, 0]
+                                ])
+grad = sg.convolve2d(arr, kernel, mode='same', boundary='symm')
+
+grad_biases = np.absolute(grad) + 100
+grad_biases[grad_biases > 255] = 255
+
+print('GRADIENT MAGNITUDE - Feature map')
+
+fig,aux = plt.subplots(figsize=(10,10))
+aux.imshow(np.absolute(grad_biases), cmap='gray')
