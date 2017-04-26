@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -25,42 +26,82 @@ x = tf.placeholder(tf.float32, shape=[None, flat])
 y_ = tf.placeholder(tf.float32, shape=[None, class_output])
 
 # Convert images of the data set to tensors
-x_image = tf.reshape(x, [-1,28,28,1])
+x_image = tf.reshape(x, [-1, 28, 28, 1])
 
-#### Convolutional layer 1 ####
+# --- Convolutional layer 1 ---
 
 # Define kernel weights & biases
-W_conv1 = tf.Variable(tf.truncated_normal([5,5,1,32], stddev=0.1))
+W_conv1 = tf.Variable(tf.truncated_normal([5, 5, 1, 32], stddev=0.1))
 b_conv1 = tf.Variable(tf.constant(0.1, shape=[32]))
 
 # Define function to create convolutional layers
-convolve1 = (tf.nn.conv2d(x_image, W_conv1, strides=[1,1,1,1], padding='SAME')
-            + b_conv1)
+convolve1 = (tf.nn.conv2d(x_image, W_conv1, strides=[1, 1, 1, 1],
+             padding='SAME') + b_conv1)
 
 # Apply the ReLU activation function
 h_conv1 = tf.nn.relu(convolve1)
 
 # Define a max pooling function
-h_pool1 = tf.nn.max_pool(h_conv1, ksize=[1,2,2,1], strides=[1,2,2,1])
+h_pool1 = tf.nn.max_pool(h_conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1])
 
 # First layer completed
 layer1 = h_pool1
 
-#### Convolutional layer 2 ####
+# --- Convolutional layer 2 ---
 
 # Define kernel weights & biases
-W_conv2 = tf.Variable(tf.truncated_normal([5,5,32,64], stddev=0.1))
+W_conv2 = tf.Variable(tf.truncated_normal([5, 5, 32, 64], stddev=0.1))
 b_conv2 = tf.Variable(tf.constant(0.1, shape=[64]))
 
 # Define function to create convolutional layers
-convolve2 = (tf.nn.conv2d(layer1, W_conv2, strides=[1,1,1,1], padding='SAME'))
-            + b_conv2)
+convolve2 = (tf.nn.conv2d(layer1, W_conv2, strides=[1, 1, 1, 1],
+             padding='SAME')) + b_conv2
 
 # Apply ReLU activation function
 h_conv2 = tf.nn.relu(convolve2)
 
 # Apply max pooling
-h_pool2 = tf.nn.max_pool(h_conv2, ksize==[1,2,2,1], strides=[1,2,2,1])
+h_pool2 = tf.nn.max_pool(h_conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+                         padding='SAME')
 
 # Second layer complete
 layer2 = h_pool2
+
+# --- Layer 3 ---
+
+# Flatten second layer
+layer2_matrix = tf.reshape(layer2, [-1, 7 * 7 * 64])
+
+# Weights and biases between level 2 and 3
+W_fcl = tf.Variablle(tf.truncated_normal([7 * 7 * 64, 1024], stddev=0.1))
+# Number of biases must match number of outputs
+b_fcl = tf.constant(0.1, shape=[1024])
+
+# Apply weightws and biases
+fcl3 = tf.matmul(layer2_matrix, W_fcl) + b_fcl
+
+# Apply ReLU activation function
+h_fcl = tf.nn.relu(fcl3)
+
+# Third layer complete
+layer3 = h_fcl
+
+# --- Define dropout to reduce overfitting ---
+
+keep_prob = tf.placeholder(tf.float32)
+layer3_drop = tf.nn.dropout(layer3, keep_prob)
+
+# --- Layer 4, softmax readout layer ---
+
+# Weights & Biases
+W_fc2 = tf.Variable(tf.truncated_normal([1024, 10], stddev=0.1))
+b_fc2 = tf.Variable(tf.constant(0.1, shape=[10]))
+
+# Matrix multiplication to apply wights & biases
+fcl4 = tf.matmul(layer3_drop, W_fc2) + b_fc2
+
+# Apply softmax activation function
+y_conv = tf.nn.softmax(fcl4)
+layer4 = y_conv
+
+# --- Define functions and traint the model ---
