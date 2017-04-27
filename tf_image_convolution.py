@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
+# from PIL import Image
 from scipy import misc
-from scipy import signal
+# from scipy import signal
 import tensorflow as tf
 
 # img download location :
@@ -109,16 +109,34 @@ def max_pool(X):
     return mpool
 
 
-W_conv1 = tf.Variable(tf.random_normal([5, 5, 1, 32]))
-b_conv1 = tf.Variable(tf.random_normal(shape=[32]))
+weights = {'W_conv1': tf.Variable(tf.random_normal([5, 5, 1, 32]))}
+biases = {'b_conv1': tf.Variable(tf.random_normal(shape=[32]))}
 
 # Define a tensorflow graph for relu, convolution, and max pooling
-
-conv1 = tf.nn.relu(conv2d(image, weights['W_conv1']) + biases['b_conv1'])
+conv1 = tf.nn.relu(conv2d(img_placeholder,
+                          weights['W_conv1']) + biases['b_conv1'])
 maxpool = max_pool(conv1)
 
+print(f"The shape of conv1 is: {conv1.shape}")
+print(f"The shape of maxpool is: {maxpool.shape}")
 # Intialize all variables and run the session
 init = tf.global_variables_initializer()
 sess.run(init)
 
+# Run session to get output of first layer
+layer1 = sess.run(maxpool, feed_dict={img_placeholder: image})
+
+# Visualize the output of convolutional layer1
+print(f"The shape of layer1 is: {layer1.shape}")
+vec = np.reshape(layer1, (256, 256, 32))
+print(f"The shape of the reshaped vec is: {vec.shape}")
+
+for i in range(32):
+    out_image = vec[:, :, i]
+    # print(out_image)
+    # out_image *= 255.0 / image.max()
+    # print(out_image)
+    plt.imshow(out_image, cmap=plt.get_cmap('gray'))
+    plt.xlabel(i, fontsize=20, color='red')
+    plt.show()
 sess.close()
