@@ -30,7 +30,7 @@ print(f"The shape of the grayscale image is: {grayim.shape}")
 
 """ For convolution Tensorflow acepts images in dimensions:
 [num of images, width, height, channels]
-In this case we are looking for dimensions of [1, 512, 512, 1] from the sahpe
+In this case we are looking for dimensions of [1, 512, 512, 1] from the shape
 of the image, (512, 512)
 """
 
