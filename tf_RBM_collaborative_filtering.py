@@ -107,7 +107,7 @@ errors = []
 
 for i in range(epochs):
     for start, end in zip(range(0, len(train_X), batchsize),
-                          batchsize, len(train_X), batchsize):
+                          range(batchsize, len(train_X), batchsize)):
         # define batch and feed_dict for update sequence
         batch = train_X[start:end]
         fdict = {v0: batch,
@@ -132,3 +132,21 @@ plt.plot(errors)
 plt.ylabel('Error')
 plt.xlabel('Epoch')
 plt.show()
+
+# --- Recomendation ---
+
+# Selecting the input user
+input_user = [train_X[75]]
+
+# Feed in the user and reconstruct the input
+hh0 = tf.nn.sigmoid(tf.matmul(v0, W) + hb)
+vv1 = tf.nn.sigmoid(tf.matmul(hh0, tf.transpose(W)) + vb)
+feed = sess.run(hh0, feed_dict={v0: input_user,
+                                W: prv_w,
+                                hb: prv_hb})
+
+rec = sess.run(vv1, feed_dict={hh0: feed,
+                               W: prv_w,
+                               vb: prv_vb})
+movies_df['recommendation_score'] = rec[0]
+print(movies_df.sort(['recommendation_score'], ascending=False).head(20))
