@@ -2,6 +2,7 @@ import math
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+from tensorflow.examples.tutorials.mnist import input_data
 from utils import tile_raster_images
 
 
@@ -55,4 +56,55 @@ class RBM(object):
         negative_grad = tf.matmul(tf.transpose(v1), h1)
 
         # Update learning rates for layers
-        
+        update_w = (_w + self.learning_rate * (positive_grad - negative_grad)
+                    / tf.to_float(tf.shape(v0[0])))
+        update_vb = _vb + self.learning_rate * tf.reduce_mean(v0 - v1, 0)
+        update_hb = _hb + self.learning_rate * tf.reduce_mean(h0 - h1, 0)
+
+        # Find the error rates
+        err = tf.reduce_mean(tf.square(v0 - v1))
+
+        # Training Loop
+        with tf.Session() as sess:
+            sess.run(tf.initialize_all_variables())
+            # For each epoch
+            for epoch in range(self.epochs):
+                # For each step/batch
+                for start, end in zip(range(0, len(X), self.batchsize), range(self.batchsize, len(X), self.batchsize)):
+                    batch = X[start:end]
+                    # update rates
+                    fdict = {v0: batch, _w: prv_w, _hb: prv_hb, _vb: prv_vb}
+
+                    cur_w = sess.run(update_w, feed_dict=fdict)
+                    cur_hb = sess.run(update_hb, feed_dict=fdict)
+                    cur_vb = sess.run(update_vb, feed_dict=fdict)
+                    prv_w = cur_w
+                    prv_hb = cur_hb
+                    prv_vb = cur_vb
+                error = sess.run(err, feed_dict={v0: X,
+                                                 _w: cur_w,
+                                                 _vb: cur_vb,
+                                                 _hb: cur_hb})
+                print(f'Epoch: {epoch}, reconstruction error: {error}')
+            self.w = prv_w
+            self.hb = prv_hb
+            self.vb = prv_vb
+
+    def rbm_output(self, X):
+        input_X = tf.constant(X)
+        _w = tf.constant(self.w)
+        _hb = tf.constant(self.hb)
+        out = tf.nn.sigmoid(tf.matmul(input_X, _w) + _hb)
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            return sess.run(out)
+
+
+if __name__ == '__main__':
+    mnist = input_data.read_data_sets('MNIST_Data/', one_hot=True)
+    trX, trY, teX, teY = mnist.train.images, mnist.train.labels,
+    mnist.test.images, mnist.test.labels
+
+    # Create 2 layers of RBM with size of 400 and 100
+    RBM_hidden_sizes = [500, 200, 50]
+    
