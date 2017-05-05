@@ -100,6 +100,25 @@ class RBM(object):
             return sess.run(out)
 
 
+class NN(object):
+
+    def __init__(self, sizes, X, Y):
+        # Initialize hyperparameters
+        self._sizes = sizes
+        self._X = X
+        self._Y = Y
+        self.w_list = []
+        self.b_list = []
+        self._learning_rate = 1.0
+        self._momentum = 0.0
+        self._epochs = 10
+        self._batchsize = 100
+        input_size = X.shape[1]
+
+        # Initialization loop
+        for size in self.sizes + [Y.shape[1]]:
+
+
 if __name__ == '__main__':
     mnist = input_data.read_data_sets('MNIST_Data/', one_hot=True)
     trX, trY, teX, teY = mnist.train.images, mnist.train.labels,
@@ -107,4 +126,31 @@ if __name__ == '__main__':
 
     # Create 2 layers of RBM with size of 400 and 100
     RBM_hidden_sizes = [500, 200, 50]
-    
+
+    # Set input as training data
+    inpX = trX
+
+    # Create list to hold our RBM's
+    rbm_list = []
+
+    # Size of inputs is the number of inputs in the traiing set
+    input_size = inpX.shape[1]
+
+    # For each RBM we want to generate
+    for i, size in enumerate(RBM_hidden_sizes):
+        print(f'RBM: {i}, {input_size} -> {size}')
+        rbm_list.append(RBM(input_size, size))
+        input_size = size
+
+    # Training loop
+    for rbm in rbm_list:
+        print('New RBM:')
+        # Train a new rbm
+        rbm.train(inpX)
+        # Return the ouput layer
+        inpX = rbm.rbm_output(inpX)
+
+    # Execute the code
+    nNet = NN(RBM_hidden_sizes, trX, trY)
+    nNet.load_from_rbms(RBM_hidden_sizes, rbm_list)
+    nNet.train()
