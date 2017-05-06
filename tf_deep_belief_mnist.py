@@ -116,7 +116,7 @@ class NN(object):
         input_size = X.shape[1]
 
         # Initialization loop
-        for size in self.sizes + [Y.shape[1]]:
+        for size in self._sizes + [Y.shape[1]]:
             # Define upper limit for the uniform distribution range
             max_range = 4 * math.sqrt(6. / (input_size + size))
 
@@ -174,7 +174,7 @@ class NN(object):
             for i in range(self._epochs):
                 # For each step
                 for start, end in zip(range(0,
-                                            len(self.X),
+                                            len(self._X),
                                             self._batchsize),
                                       range(self._batchsize,
                                             len(self._X),
@@ -198,8 +198,8 @@ class NN(object):
 
 if __name__ == '__main__':
     mnist = input_data.read_data_sets('MNIST_Data/', one_hot=True)
-    trX, trY, teX, teY = mnist.train.images, mnist.train.labels,
-    mnist.test.images, mnist.test.labels
+    trX, trY = mnist.train.images, mnist.train.labels
+    teX, teY = mnist.test.images, mnist.test.labels
 
     # Create 2 layers of RBM with size of 400 and 100
     RBM_hidden_sizes = [500, 200, 50]
