@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from mpl_toolkits.mplot3d import Axes3D
@@ -21,17 +21,23 @@ def plot_act(i=1.0, actfunc=lambda x: x):
 
 # Start a session
 sess = tf.Session()
+
 # Create a simple input of 3 real values
 i = tf.constant([1.0, 2.0, 3.0], shape=[1, 3])
+
 # Create a matrix of weights
 w = tf.random_normal(shape=[3, 3])
+
 # Create a vector of biases
 b = tf.random_normal(shape=[1, 3])
+
 # Dummy activation function
 def func(x): return x
+
 # tf.matmul will multiply the input(i) tensor and the weight(w) tensor then
 # sum the result with the bias(b) tensor.
 act = func(tf.matmul(i, w) + b)
+
 # Evaluate the tensor to a numpy array
 act.eval(session=sess)
 

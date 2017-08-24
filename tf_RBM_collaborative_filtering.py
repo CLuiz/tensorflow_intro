@@ -43,10 +43,13 @@ for user_id, cur_user in user_group:
 # Build RBM with tf
 hidden_units = 20
 visible_units = len(movies_df)
+
 # Number of unique movies
 vb = tf.placeholder('float', [visible_units])
+
 # Number of features to learn
 hb = tf.placeholder('float', [hidden_units])
+
 # Set weights
 W = tf.placeholder('float', [visible_units, hidden_units])
 
@@ -148,5 +151,6 @@ feed = sess.run(hh0, feed_dict={v0: input_user,
 rec = sess.run(vv1, feed_dict={hh0: feed,
                                W: prv_w,
                                vb: prv_vb})
+
 movies_df['recommendation_score'] = rec[0]
 print(movies_df.sort(['recommendation_score'], ascending=False).head(20))

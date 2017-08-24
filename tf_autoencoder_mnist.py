@@ -8,6 +8,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 # Read in data
 mnist = input_data.read_data_sets('tmp/data/', one_hot=True)
+
 # -- Set parameters ---
 learning_rate = 0.01
 epochs = 20
@@ -103,6 +104,7 @@ print('*' * 30)
 # Apply encode and decode over the  test set
 encode_decode = sess.run(y_pred,
                          feed_dict={X: mnist.test.images[:examples_to_show]})
+
 # Compare original images with their reconstructions
 f, a = plt.subplots(2, 10, figsize=(10, 2))
 for i in range(examples_to_show):
