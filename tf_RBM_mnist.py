@@ -1,8 +1,9 @@
-"""Restricted Boltzman Machine applied to MNIST dataset
-"""
+"""Restricted Boltzman Machine applied to MNIST dataset"""
+
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 from PIL import Image
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
