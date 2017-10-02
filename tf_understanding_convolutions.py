@@ -5,16 +5,17 @@ from scipy import signal as sg
 from scipy import misc
 import tensorflow as tf
 
-h = [2,1,0]
-x = [3,4,5]
+h = [2, 1, 0]
+x = [3, 4, 5]
 
-y1 = np.convolve(x,h)
+y1 = np.convolve(x, h)
 print(f'Standard numpy implementation of convolve: {y1}')
-print(f'Compare with the following values in Python: {y1[0]} ; {y1[1]}; {y1[2]}; {y1[3]}; {y1[4]}')
+print(f'Compare with the following values in Python: \
+        {y1[0]}; {y1[1]}; {y1[2]}; {y1[3]}; {y1[4]}')
 
 # Effects of using zero padding
-h = [1,2,5,4]
-x = [6,2]
+h = [1, 2, 5, 4]
+x = [6, 2]
 
 y2 = np.convolve(x, h, 'full')
 print(f'"Full" numpy implementation of convolve: {y2}')
@@ -35,8 +36,9 @@ print('*' * 50)
 # 2d convolutional operations with scipy.signal
 I = [[255,   7,   3],
      [212, 240,   4],
-     [218, 216, 230],]
-g = [[-1,1]]
+     [218, 216, 230],
+     ]
+g = [[-1, 1]]
 
 print('Without zero padding, "valid" & 1x2 kernel: \n')
 print(f'{sg.convolve(I, g, "valid")} \n')
@@ -54,16 +56,17 @@ print('*' * 50)
 
 I = [[255,   7,   3],
      [212, 240,   4],
-     [218, 216, 230],]
-g = [[-1,1],
-     [2 ,3]]
+     [218, 216, 230],
+     ]
+g = [[-1, 1],
+     [2, 3]]
 
-# The output of the below is the full discreet linear convolution of the inputs.
+# The output of the below is the full discreet linear convolution of the inputs
 # It will use zero to complete the linear matrix.
 print('With zero padding, "full", & 2x2 kernel: \n')
 print(f"{sg.convolve(I, g, 'full')} \n")
 
-# The output of the below is the full discreet linear convolution of the inputs.
+# The output of the below is the full discreet linear convolution of the inputs
 # It will use zero to complete the linear matrix.
 print('With zero padding, "same", & 2x2 kernel: \n')
 print(f"{sg.convolve(I, g, 'same')} \n")
@@ -83,7 +86,7 @@ print('*' * 50)
 input = tf.Variable(tf.random_normal([1, 10, 10, 1]))
 filter = tf.Variable(tf.random_normal([3, 3, 1, 1]))
 op = tf.nn.conv2d(input, filter, strides=[1, 1, 1, 1], padding='VALID')
-op2 = tf.nn.conv2d(input, filter, strides=[1 ,1, 1, 1], padding='SAME')
+op2 = tf.nn.conv2d(input, filter, strides=[1, 1, 1, 1], padding='SAME')
 
 # Initialize variables and session
 init = tf.global_variables_initializer()
@@ -127,7 +130,7 @@ with tf.Session() as sess:
 
 kernel = np.array([
                     [0, 1, 0],
-                    [1,-4, 1],
+                    [1, -4, 1],
                     [0, 1, 0]
                                 ])
 grad = sg.convolve2d(arr, kernel, mode='same', boundary='symm')
@@ -137,5 +140,5 @@ grad_biases[grad_biases > 255] = 255
 
 print('GRADIENT MAGNITUDE - Feature map')
 
-fig,aux = plt.subplots(figsize=(10,10))
+fig, aux = plt.subplots(figsize=(10, 10))
 aux.imshow(np.absolute(grad_biases), cmap='gray')

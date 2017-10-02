@@ -1,5 +1,6 @@
 import math
 import numpy as np
+
 from PIL import Image
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
@@ -161,7 +162,8 @@ class NN(object):
         cost = tf.reduce_mean(tf.square(_a[-1] - y))
 
         # Define the training operation
-        train_op = tf.train.MomentumOptimizer(self._learning_rate, self._momentum).minimize(cost)
+        train_op = tf.train.MomentumOptimizer(self._learning_rate,
+                                              self._momentum).minimize(cost)
 
         # Prediction operation
         predict_op = tf.argmax(_a[-1], 1)
@@ -187,11 +189,12 @@ class NN(object):
                     self.w_list[j] = sess.run(_w[j])
                     self.b_list[j] = sess.run(_b[j])
 
-                print("Accuracy rating for epoch " + str(i) + ": " + str(np.mean(np.argmax(self._Y,
-                                        axis=1) ==
-                                        sess.run(predict_op,
-                                                 feed_dict={_a[0]: self._X,
-                                                            y: self._Y}))))
+                print("Accuracy rating for epoch " + str(i) + ": " +
+                      str(np.mean(np.argmax(self._Y,
+                                            axis=1) ==
+                                  sess.run(predict_op,
+                                           feed_dict={_a[0]: self._X,
+                                                      y: self._Y}))))
 
                 # print(f'Accuracy rating for epoch {str(i)}: ')
 
